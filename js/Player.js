@@ -23,10 +23,6 @@ class Player {
 		this.gotoStartCoordinate();
 
 		setInterval(() => {
-			if (this.xSpeed === 0 && this.ySpeed === 0) {
-				return;
-			}
-
 			let xCord = this.xCord + this.xSpeed;
 			let yCord = this.yCord + this.ySpeed;
 
