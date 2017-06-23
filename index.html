@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Bomberman</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #canvas {
+                /*background-color: crimson;*/
+                padding: 0;
+                margin: auto;
+                display: block;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        </style>
+    </head>
+    <body onload="main()">
+        <canvas id="canvas"></canvas>
+
+
+        <script src="js/BLOCKSTATE.js"></script>
+        <script src="js/DIRECTION.js"></script>
+        <script src="js/Painter.js"></script>
+        <script src="js/Bomb.js"></script>
+        <script src="js/Player.js"></script>
+        <script src="js/Block.js"></script>
+        <script src="js/World.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

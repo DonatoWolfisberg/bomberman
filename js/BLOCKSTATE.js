@@ -1,0 +1,10 @@
+'use strict';
+
+const BLOCKSTATE = {
+	EMPTY: 0,
+	DESTRUCTIBLE: 1,
+	INDESTRUCTIBLE: 2,
+	BOMB: 3,
+	FIRE: 4,
+	OUTOFGAME: 5
+};
