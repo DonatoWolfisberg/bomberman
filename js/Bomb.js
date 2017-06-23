@@ -1,6 +1,11 @@
 'use strict';
 
 class Bomb {
+	// The block the bomb is on
+	get block() {
+		return this.world.getBlockAt(this.x, this.y);
+	}
+
 	constructor(x, y, player, world) {
 		this.x = x;
 		this.y = y;
@@ -8,23 +13,37 @@ class Bomb {
 		this.player = player;
 		this.world = world;
 		this.radious = this.world.blockSize / 1.7 / 2;
-		this.world.gameField[this.x][this.y].blockState = BLOCKSTATE.BOMB;
+		this.block.addEntity(this);
 		this.ignitionTime = 0;
 		this.power = 2;
 
 		this.fireBlocks = [];
 
+		this.wasDestroied = false;
+		this.updateInterval = setInterval(() => {
+			if (this.block.blockState === BLOCKSTATE.FIRE) {
+			    this.wasDestroied = true;
+				this.block.removeEntity(this);
+				this.player.bombs.splice(this.player.bombs.indexOf(this), 1);
+			}
+		},30);
+
 
 		setTimeout(() => {
+			clearInterval(this.updateInterval);
+			if (this.wasDestroied) {
+			    return;
+			}
 			this.ignitionTime = Date.now();
 			this.player.bombs.splice(this.player.bombs.indexOf(this), 1);
 			this.searchBlocks(DIRECTION.UP);
 			this.searchBlocks(DIRECTION.DOWN);
 			this.searchBlocks(DIRECTION.LEFT);
 			this.searchBlocks(DIRECTION.RIGHT);
-			this.world.getBlockAt(this.x, this.y).blockState = BLOCKSTATE.FIRE;
-			this.world.getBlockAt(this.x, this.y).ignitionTime = this.ignitionTime;
-			this.fireBlocks.push(this.world.getBlockAt(this.x, this.y));
+			this.block.blockState = BLOCKSTATE.FIRE;
+			this.block.ignitionTime = this.ignitionTime;
+			this.fireBlocks.push(this.block);
+			this.block.removeEntity(this);
 			setTimeout(()=>{this.extinguishFire()},1000);
 		}, (Math.floor(Math.random() * 5) + 3) * 1000)
 	}

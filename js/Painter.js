@@ -16,8 +16,6 @@ class Painter {
 						this.ctx.fillStyle="#86b8ff";
 					} else if (block.blockState === BLOCKSTATE.INDESTRUCTIBLE) {
 						this.ctx.fillStyle="#011833";
-					} else if (block.blockState === BLOCKSTATE.BOMB) {
-						this.ctx.fillStyle="#bbffba";
 					} else if (block.blockState === BLOCKSTATE.FIRE) {
 						this.ctx.fillStyle="#fffd2b";
 					}

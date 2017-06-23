@@ -7,8 +7,28 @@ class Player {
 	get y() { return Math.floor(this.yCord / this.world.blockSize); }
 	set y(value) { this.yCord = this.world.blockSize * value + this.world.blockSize / 2; }
 
+	get xCord() { return this._xCord; }
+	set xCord(value) {
+		if (Math.floor(value / this.world.blockSize) !== this.x) {
+			this.world.getBlockAt(this.x, this.y).removeEntity(this);
+			this.world.getBlockAt(Math.floor(value), this.y).addEntity(this)
+		}
+		this._xCord = value;
+	}
+
+	get yCord() { return this._yCord; }
+	set yCord(value) {
+		if (Math.floor(value / this.world.blockSize) !== this.y) {
+			this.world.getBlockAt(this.x, this.y).removeEntity(this);
+			this.world.getBlockAt(this.x, Math.floor(value)).addEntity(this)
+		}
+		this._yCord = value;
+	}
 
 	constructor(world, playerNum) {
+		this._xCord = 0;
+		this._yCord = 0;
+
 		this.world = world;
 		this.playerNum = playerNum;
 		this.size = this.world.blockSize / 2;
@@ -46,7 +66,7 @@ class Player {
 			));
 
 			for (let block of touchingBlocks) {
-				if (block.blockState === BLOCKSTATE.BOMB) {
+				if (block.hasBombOnBlock()) {
 					if (!(block.x === this.x && block.y === this.y)) {
 						if (this.x - block.x < 0) { // true  bombe rechts von spieler Rechts
 							if (this.xSpeed === 1) {
@@ -76,7 +96,7 @@ class Player {
 						}
 					}
 				} else if (block.blockState === BLOCKSTATE.FIRE) {
-					console.log('you die');
+					console.log('Player ' + this.playerNum + ' Died');
 					return;
 				} else if (block.blockState !== BLOCKSTATE.EMPTY) {
 					this.xSpeed = 0;
@@ -98,7 +118,7 @@ class Player {
 		if (this.world.getBlockAt(this.x, this.y).blockState === BLOCKSTATE.EMPTY) {
 			this.lastBombDrop = Date.now();
 			this.bombs.push(new Bomb(this.x, this.y, this, this.world));
-			console.log('droppig');
+			console.log('Player: ' + this.playerNum + ' dropped a Bomb');
 		}
 	}
 
