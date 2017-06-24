@@ -1,7 +1,9 @@
 'use strict';
 
 class Player {
-	get x() { return Math.floor(this.xCord / this.world.blockSize); }
+	get x() {
+		return Math.floor(this.xCord / this.world.blockSize);
+	}
 	set x(value) { this.xCord = this.world.blockSize * value + this.world.blockSize / 2; }
 
 	get y() { return Math.floor(this.yCord / this.world.blockSize); }
@@ -11,7 +13,7 @@ class Player {
 	set xCord(value) {
 		if (Math.floor(value / this.world.blockSize) !== this.x) {
 			this.world.getBlockAt(this.x, this.y).removeEntity(this);
-			this.world.getBlockAt(Math.floor(value), this.y).addEntity(this)
+			this.world.getBlockAt(Math.floor(value / this.world.blockSize), this.y).addEntity(this)
 		}
 		this._xCord = value;
 	}
@@ -20,21 +22,23 @@ class Player {
 	set yCord(value) {
 		if (Math.floor(value / this.world.blockSize) !== this.y) {
 			this.world.getBlockAt(this.x, this.y).removeEntity(this);
-			this.world.getBlockAt(this.x, Math.floor(value)).addEntity(this)
+			this.world.getBlockAt(this.x, Math.floor(value / this.world.blockSize)).addEntity(this)
 		}
 		this._yCord = value;
 	}
 
+	get ownBlock() {
+		return this.world.getBlockAt(this.x, this.y);
+	}
+
 	constructor(world, playerNum) {
-		this._xCord = 0;
-		this._yCord = 0;
+		this._xCord = Infinity;
+		this._yCord = Infinity;
 
 		this.world = world;
 		this.playerNum = playerNum;
 		this.size = this.world.blockSize / 2;
 		this.speed = 10;
-		this.yCord = 100;
-		this.xCord = 100;
 		this.xSpeed = 0;
 		this.ySpeed = 0;
 		this.bombs = [];
@@ -66,39 +70,37 @@ class Player {
 			));
 
 			for (let block of touchingBlocks) {
-				if (block.hasBombOnBlock()) {
-					if (!(block.x === this.x && block.y === this.y)) {
-						if (this.x - block.x < 0) { // true  bombe rechts von spieler Rechts
-							if (this.xSpeed === 1) {
-								this.xSpeed = 0;
-								this.ySpeed = 0;
-								return;
-							}
-						} else {
-							if (this.xSpeed === -1) {
-								this.xSpeed = 0;
-								this.ySpeed = 0;
-								return;
-							}
-						}
-						if (this.y - block.y < 0) { // true  bombe rechts von spieler Rechts
-							if (this.ySpeed === 1) {
-								this.xSpeed = 0;
-								this.ySpeed = 0;
-								return;
-							}
-						} else {
-							if (this.ySpeed === -1) {
-								this.xSpeed = 0;
-								this.ySpeed = 0;
-								return;
-							}
-						}
+				if(block.hasBombOnBlock() && this.ownBlock !== block) {
+					if (this.x - block.x < 0 && this.xSpeed === 1) { // true  bombe rechts von spieler Rechts
+						this.xSpeed = 0;
+						this.ySpeed = 0;
+						return;
+					} else if (this.xSpeed === -1) {
+						this.xSpeed = 0;
+						this.ySpeed = 0;
+						return;
 					}
-				} else if (block.blockState === BLOCKSTATE.FIRE) {
+					if (this.y - block.y < 0 && this.ySpeed === 1) { // true  bombe Oben von spieler Rechts
+						this.xSpeed = 0;
+						this.ySpeed = 0;
+						return;
+					} else if (this.ySpeed === -1) {
+						this.xSpeed = 0;
+						this.ySpeed = 0;
+						return;
+					}
+				}
+
+				if (block.blockState === BLOCKSTATE.FIRE) {
 					console.log('Player ' + this.playerNum + ' Died');
 					return;
-				} else if (block.blockState !== BLOCKSTATE.EMPTY) {
+				}
+
+				if (
+					block.blockState === BLOCKSTATE.INDESTRUCTIBLE ||
+					block.blockState === BLOCKSTATE.DESTRUCTIBLE ||
+					block.blockState === BLOCKSTATE.OUTOFGAME
+					) {
 					this.xSpeed = 0;
 					this.ySpeed = 0;
 				    return;
@@ -108,7 +110,6 @@ class Player {
 			this.yCord = yCord;
 			this.xCord = xCord;
 		}, this.speed)
-
 	}
 
 	dropBomb() {

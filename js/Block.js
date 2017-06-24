@@ -20,9 +20,15 @@ class Block {
 
 	addEntity(entity) {
 		this.entitysOnBlock.push(entity)
+
 	}
 
 	removeEntity(entity) {
-		this.entitysOnBlock.splice(this.entitysOnBlock.indexOf(entity), 1);
+		console.log('remove');
+		try {
+			this.entitysOnBlock.splice(this.entitysOnBlock.indexOf(entity), 1);
+		} catch (e) {
+			console.log('failed removing entity');
+		}
 	}
 }
