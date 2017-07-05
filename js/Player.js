@@ -75,7 +75,7 @@ class Player {
 						this.xSpeed = 0;
 						this.ySpeed = 0;
 						return;
-					} else if (this.xSpeed === -1) {
+					} else if (this.x - block.x > 0 && this.xSpeed === -1) {
 						this.xSpeed = 0;
 						this.ySpeed = 0;
 						return;
@@ -84,7 +84,7 @@ class Player {
 						this.xSpeed = 0;
 						this.ySpeed = 0;
 						return;
-					} else if (this.ySpeed === -1) {
+					} else if (this.y - block.y > 0 && this.ySpeed === -1) {
 						this.xSpeed = 0;
 						this.ySpeed = 0;
 						return;
